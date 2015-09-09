@@ -14,9 +14,11 @@ Para crear las maquinas virtuales, primero debemos saber que plataforma será, e
 
 El nombre de la maquina (VMNAME) será un codigo de entorno-plataforma. Ejemplos: stag-datosabiertos, prod-gobiernoabierto, dev-atencionciudadana. 
 
+```shell
 lxc-create -n ${VMNAME} -t ubuntu -- -r precise
 lxc-start -n ${VMNAME} -d
 lxc-attach -n ${VMNAME}  --clear-env
+```
 
 Una vez creada la maquina copiaremos el script "install_${PLATAFORMA}" y modificaremos las variables que están al inicio, dependiendo del script. Por ejemplo para la plataforma de Atencion Ciudadana, entorno de producción (production): 
 
