@@ -144,6 +144,8 @@ ${RAILS_ENV}:
     host: 'sub.example.com'
 EOL
 
+service nginx restart
+
 set +x 
 
 echo "**************************************************************************"
@@ -157,7 +159,7 @@ echo "    ssh ${URL}"
 echo " 3. Ejecutar en local (development)"
 echo "    $ cap ${RAILS_ENV} deploy"
 echo "    $ cap ${RAILS_ENV} invoke[db:seed]"
-echo " 4. Comprobar en configuración del Host (LXC) y dominios que funcione."
+echo " 4. Comprobar en configuración del Host (LXC), proxy (nginx) y dominios que funcione."
 echo ""
 echo " Dirección IP: ${IP_ADDRESS}"
 echo " Dirección URL: https://${URL}"

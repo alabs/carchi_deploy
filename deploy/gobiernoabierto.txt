@@ -1,0 +1,13 @@
+
+# Deploy Gobierno Abierto
+
+1. Para recargar el código hace falta configurar el entorno de desarrollo, ver en https://github.com/alabs/carchi_gobiernoabierto 
+
+2. Se suben los cambios a la rama git production o staging.
+
+3. Se realiza con los comandos
+
+```
+cap staging deploy
+cap production deploy
+```
