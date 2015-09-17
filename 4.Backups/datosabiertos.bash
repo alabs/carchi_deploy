@@ -2,7 +2,6 @@
 # 
 # Script para la copia de seguridad de la plataforma de Datos Abiertos de Carchi
 # Autor: apereira@alabs.org
-# Fecha: 8 de Septiembre de 2015 
 #
 
 source /usr/lib/ckan/default/bin/activate || exit 1

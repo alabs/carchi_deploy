@@ -7,13 +7,21 @@
 
 date
 
-URL=beta.datosabiertos.carchi.gob.ec
-DB_NAME=datosabier_stag
-DB_USER=datosabier_stag
+URL=datosabiertos.carchi.gob.ec
+DB_NAME=datosabier_prod
+DB_USER=datosabier_prd
+#DBDAT_USER=datastore_prod
+#DBDAT_NAME=datastore_prod
+
+#URL=beta.datosabiertos.carchi.gob.ec
+#DB_NAME=datosabier_stag
+#DB_USER=datosabier_stag
+##DBDAT_USER=datastore_stag
+##DBDAT_NAME=datastore_stag
+
+########################################################################
 DB_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
-DBDAT_USER=datastore_stag
-DBDAT_NAME=datastore_stag
-DBDAT_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
+#DBDAT_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
 echo "**************************************************************************"
@@ -51,6 +59,11 @@ EOL
 apt-get update
 apt-get install -y nginx apache2 libapache2-mod-wsgi libpq5 wget
 
+# install postfix (SMTP)
+echo postfix postfix/main_mailer_type select Internet Site | debconf-set-selections
+echo postfix postfix/mailname string localhost | debconf-set-selections
+apt-get install -y postfix
+
 # install ckan
 wget http://packaging.ckan.org/python-ckan_2.3_amd64.deb
 dpkg -i python-ckan_2.3_amd64.deb
@@ -78,18 +91,28 @@ sudo -u postgres psql -c "ALTER USER ${DB_USER} PASSWORD '${DB_PASS}';"
 sudo -u postgres createdb -O ${DB_USER} ${DB_NAME} # -E utf-8
 
 # create database CKAN - datastore
-sudo -u postgres createuser -S -D -R ${DBDAT_USER}
-sudo -u postgres psql -c "ALTER USER ${DBDAT_USER} PASSWORD '${DBDAT_PASS}';"
-sudo -u postgres createdb -O ${DB_USER} ${DBDAT_NAME} # -E utf-8
+#sudo -u postgres createuser -S -D -R ${DBDAT_USER}
+#sudo -u postgres psql -c "ALTER USER ${DBDAT_USER} PASSWORD '${DBDAT_PASS}';"
+#sudo -u postgres createdb -O ${DB_USER} ${DBDAT_NAME} # -E utf-8
 
 # config database
 cd /usr/lib/ckan/default/src/ckan
 source /usr/lib/ckan/default/bin/activate
-sed -i "/sqlalchemy.url/c\sqlalchemy.url = postgresql://${DB_USER}:${DB_PASS}@localhost/${DB_NAME}
-ckan.datastore.read_url = postgresql://${DB_USER}:${DB_PASS}@localhost/${DBDAT_NAME}
-ckan.datastore.write_url = postgresql://${DBDAT_USER}:${DBDAT_PASS}@localhost/${DBDAT_NAME}" /etc/ckan/default/production.ini
+sed -i "/sqlalchemy.url/c\sqlalchemy.url = postgresql://${DB_USER}:${DB_PASS}@localhost/${DB_NAME}" /etc/ckan/default/production.ini
+#ckan.datastore.read_url = postgresql://${DB_USER}:${DB_PASS}@localhost/${DBDAT_NAME}
+#ckan.datastore.write_url = postgresql://${DBDAT_USER}:${DBDAT_PASS}@localhost/${DBDAT_NAME}" 
 paster db init -c /etc/ckan/default/production.ini
 paster datastore set-permissions postgres -c /etc/ckan/default/production.ini
+
+# Agregar en /etc/ckan/default/production.ini:
+# ckan.site_url = https://beta.datosabiertos.carchi.gob.ec
+# ckan.storage_path = /var/lib/ckan
+# ckan.max_resource_size = 10
+# ckan.max_image_size = 2
+
+mkdir -p /var/lib/ckan
+chown www-data: /var/lib/ckan
+sudo chmod u+rwx /var/lib/ckan
 
 # install carchi_theme
 pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master
@@ -118,18 +141,4 @@ paster sysadmin add admin -c /etc/ckan/default/production.ini
 
 date
 
-# Recargar código: 
-#   $ cd /usr/lib/ckan/default/src/ckan
-#   $ source /usr/lib/ckan/default/bin/activate
-#   $ pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master
-#   $ service apache2 restart
-
-# Agregar usuario admin: 
-#   $ cd /usr/lib/ckan/default/src/ckan
-#   $ source /usr/lib/ckan/default/bin/activate
-#   $ paster sysadmin add nombredelusuario -c /etc/ckan/default/production.ini
-
-# Realizar copia de seguridad: 
-
-# Restaurar copia de seguridad: 
 

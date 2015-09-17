@@ -11,9 +11,15 @@ URL=gobiernoabierto.carchi.gob.ec
 RAILS_ENV=production
 DB_NAME=gobiernabi_prod
 DB_USER=gobiernabi_prod
+
+#URL=beta.gobiernoabierto.carchi.gob.ec
+#RAILS_ENV=staging
+#DB_NAME=gobiernabi_stag
+#DB_USER=gobiernabi_stag
+
+########################################################################
 DB_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
-
 echo "**************************************************************************"
 echo ""
 echo "             INSTALACION GOBIERNO ABIERTO CARCHI - empieza"
@@ -47,7 +53,7 @@ EOL
 
 apt-get update
 
-# Paquetes básicos de Ubuntu
+# Instalación de paquetes básicos para Ubuntu
 apt-get -y install build-essential zlib1g-dev libxml2-dev libxslt-dev
 apt-get -y install git htop nodejs libssl-dev
 apt-get -y install libreadline-dev libpq-dev libcurl4-openssl-dev
@@ -58,7 +64,7 @@ apt-get -y install lighttpd curl lynx vim
 apt-get -y install ffmpegthumbnailer
 apt-get -y install libgio-cil libav-tools libavcodec-extra
 
-# install nginx + passenger 
+# install nginx + passenger (apt key and repository)
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
 apt-get install -y apt-transport-https ca-certificates
 sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list'
@@ -134,6 +140,11 @@ if [ ! -d /usr/local/src/log_reader_git ] ; then
 	curl -X PUT http://localhost:5984/wlog4
 fi
 
+# install postfix (SMTP)
+echo postfix postfix/main_mailer_type select Internet Site | debconf-set-selections
+echo postfix postfix/mailname string localhost | debconf-set-selections
+apt-get install -y postfix
+
 if [ ! -d /home/capistrano/ ] ; then 
 	# Crear usuario capistrano 
 	id -u capistrano &>/dev/null || useradd -m -s /bin/bash capistrano
@@ -198,6 +209,8 @@ EOL
 service lighttpd stop
 service nginx restart
 
+# sudo -u postgres psql -f /var/www/beta.gobiernoabierto.carchi.gob.ec/current/db/tildes.sql gobiernabi_stag 
+
 set +x
 
 echo "**************************************************************************"
@@ -220,17 +233,3 @@ echo ""
 echo "**************************************************************************"
 
 date
-
-# Recargar código:
-#   $ sudo su - capistrano 
-#   $ capisttrano TODO
-#   $ git pull origin master
-#   $ bundle install
-#   $ bundle exec rake db:migrate
-#   $ touch tmp/restart.txt
-
-# Agregar usuario admin: 
-
-# Realizar copia de seguridad: 
-
-# Restaurar copia de seguridad: 

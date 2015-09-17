@@ -11,6 +11,13 @@ URL=atencionciudadana.carchi.gob.ec
 RAILS_ENV=production
 DB_NAME=atencion_prod
 DB_USER=atencion_prod
+
+#URL=beta.atencionciudadana.carchi.gob.ec
+#RAILS_ENV=staging
+#DB_NAME=atencion_stag
+#DB_USER=atencion_stag
+
+########################################################################
 DB_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 DB_ROOTPASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
@@ -167,23 +174,3 @@ echo ""
 echo "**************************************************************************"
 
 date
-
-# Recargar código: 
-# cap staging deploy
-# cap production deploy
-
-## Agregar usuario admin: 
-#cd /var/www/${URL}/current
-#RAILS_ENV=${RAILS_ENV} bundle exec rails console 
-#email = "dominio@example.com"
-#pass = "password"
-#user = User.new
-#user.email = email
-#user.admin = true
-#user.password = pass
-#user.password_confirmation = pass
-#user.save
-
-# Realizar copia de seguridad: 
-
-# Restaurar copia de seguridad: 
