@@ -10,7 +10,7 @@ máquina virtual (por ejemplo VirtualBox) y realizar el proceso de instalación.
 3. Se conecta al servidor que corresponda (stag-datosabiertos o prod-datosabiertos) de la maquina LXC.
 
 ```
-ssh 186.3.11.222
+ssh carchi-lxc
 sudo lxc-attach -n stag-datosabiertos
 source /usr/lib/ckan/default/bin/activate
 pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master 

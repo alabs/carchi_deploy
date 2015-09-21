@@ -12,15 +12,15 @@ de SSH ($HOME/.ssh/config) los siguientes hosts:
 ```
 Host beta.gobiernoabierto.carchi.gob.ec
   Port 22
-  Hostname 10.0.3.7
+  Hostname 10.0.3.${IP}
   User capistrano
-  ProxyCommand ssh -A -p 22 usuario@186.3.11.222 nc %h %p
+  ProxyCommand ssh -A -p 22 usuario@carchi-lxc nc %h %p
 
 Host gobiernoabierto.carchi.gob.ec
   Port 22
-  Hostname 10.0.3.179
+  Hostname 10.0.3.${IP}
   User capistrano
-  ProxyCommand ssh -A -p 22 usuario@186.3.11.222 nc %h %p
+  ProxyCommand ssh -A -p 22 usuario@carchi-lxc nc %h %p
 ```
 
 3. Configurar las claves públicas SSH en los servidores en el fichero 
