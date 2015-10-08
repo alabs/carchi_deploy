@@ -7,15 +7,15 @@
 
 date
 
-URL=datosabiertos.carchi.gob.ec
-DB_NAME=datosabier_prod
-DB_USER=datosabier_prd
+#URL=datosabiertos.carchi.gob.ec
+#DB_NAME=datosabier_prod
+#DB_USER=datosabier_prd
 #DBDAT_USER=datastore_prod
 #DBDAT_NAME=datastore_prod
 
-#URL=beta.datosabiertos.carchi.gob.ec
-#DB_NAME=datosabier_stag
-#DB_USER=datosabier_stag
+URL=beta.datosabiertos.carchi.gob.ec
+DB_NAME=datosabier_stag
+DB_USER=datosabier_stag
 ##DBDAT_USER=datastore_stag
 ##DBDAT_NAME=datastore_stag
 
@@ -102,7 +102,7 @@ sed -i "/sqlalchemy.url/c\sqlalchemy.url = postgresql://${DB_USER}:${DB_PASS}@lo
 #ckan.datastore.read_url = postgresql://${DB_USER}:${DB_PASS}@localhost/${DBDAT_NAME}
 #ckan.datastore.write_url = postgresql://${DBDAT_USER}:${DBDAT_PASS}@localhost/${DBDAT_NAME}" 
 paster db init -c /etc/ckan/default/production.ini
-paster datastore set-permissions postgres -c /etc/ckan/default/production.ini
+#paster datastore set-permissions postgres -c /etc/ckan/default/production.ini
 
 # Agregar en /etc/ckan/default/production.ini:
 # ckan.site_url = https://beta.datosabiertos.carchi.gob.ec
@@ -116,7 +116,8 @@ sudo chmod u+rwx /var/lib/ckan
 
 # install carchi_theme
 pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master
-sed -i "/ckan.plugins = /c\ckan.plugins = stats text_view image_view recline_view datastore carchi_theme"  /etc/ckan/default/production.ini
+sed -i "/ckan.plugins = /c\ckan.plugins = stats text_view image_view recline_view carchi_theme"  /etc/ckan/default/production.ini
+#sed -i "/ckan.plugins = /c\ckan.plugins = stats text_view image_view recline_view datastore carchi_theme"  /etc/ckan/default/production.ini
 sed -i "/ckan.site_title = /c\ckan.site_title = Datos Abiertos El Carchi"  /etc/ckan/default/production.ini
 sed -i "/ckan.locale_default = /c\ckan.locale_default = es"  /etc/ckan/default/production.ini
 
