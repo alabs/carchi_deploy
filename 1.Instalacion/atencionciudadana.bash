@@ -9,16 +9,19 @@ date
 
 URL=atencionciudadana.carchi.gob.ec
 RAILS_ENV=production
-DB_NAME=atencion_prod
-DB_USER=atencion_prod
+#DB_NAME=atencion_prod
+#DB_USER=atencion_prod
 
 #URL=beta.atencionciudadana.carchi.gob.ec
 #RAILS_ENV=staging
-#DB_NAME=atencion_stag
-#DB_USER=atencion_stag
+DB_NAME=atencion_stag
+DB_USER=atencion_stag
 
 ########################################################################
+DBLEG_NAME=atencion_leg
+DBLEG_USER=atencion_leg
 DB_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
+DBLEG_PASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 DB_ROOTPASS=$(date +%s | sha256sum | base64 | head -c 16 ; echo)
 IP_ADDRESS=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 
@@ -80,22 +83,22 @@ EOL
 	service nginx restart
 fi
 
-# install mysql # install mysql 
-echo mysql-server mysql-server/root_password password "${DB_ROOTPASS}" | debconf-set-selections
-echo mysql-server mysql-server/root_password_again password "${DB_ROOTPASS}" | debconf-set-selections
-apt-get install -y mysql-server
-cat > /root/.my.cnf << EOL
-[client]
-user = root
-password = ${DB_ROOTPASS}
-EOL
+# Base de datos PostgreSQL
+apt-get -y install language-pack-es postgresql
+pg_dropcluster --stop 9.3 main
+pg_createcluster --locale=es_ES.utf8 --start 9.3 main
 
-# create database 
-mysql -u root -p${DB_ROOTPASS} << EOL
-CREATE DATABASE ${DB_NAME};
-GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@localhost IDENTIFIED BY '${DB_PASS}';
-FLUSH PRIVILEGES; 
-EOL
+# create database
+sudo -u postgres createuser -S -D -R ${DB_USER}
+sudo -u postgres psql -c "ALTER USER ${DB_USER} PASSWORD '${DB_PASS}';"
+sudo -u postgres createdb -O ${DB_USER} ${DB_NAME} # -E utf-8
+
+sudo -u postgres createuser -S -D -R ${DBLEG_USER}
+sudo -u postgres psql -c "ALTER USER ${DBLEG_USER} PASSWORD '${DBLEG_PASS}';"
+sudo -u postgres createdb -O ${DBLEG_USER} ${DBLEG_NAME} # -E utf-8
+
+sed -i '/local.*all.*all.*peer/c\local\tall\t\tall\t\t\t\t\tmd5'  /etc/postgresql/9.3/main/pg_hba.conf
+service postgresql reload
 
 # install postfix (SMTP)
 echo postfix postfix/main_mailer_type select Internet Site | debconf-set-selections
@@ -103,7 +106,7 @@ echo postfix postfix/mailname string localhost | debconf-set-selections
 apt-get install -y postfix
 
 # install dependencias varias de RVM/rails
-apt-get install -y libmysqlclient-dev curl build-essential git
+apt-get install -y libpq-dev curl build-essential git
 
 if [ ! -f /etc/sudoers.d/capistrano ] ; then
 	useradd -s /bin/bash -m capistrano
@@ -131,11 +134,20 @@ chown -R capistrano: /var/www
 # config database 
 cat > /var/www/${URL}/shared/config/database.yml <<EOL
 ${RAILS_ENV}:
-  adapter: mysql2
+  adapter: postgresql
   encoding: utf8
   database: ${DB_NAME}
   username: ${DB_USER}
   password: ${DB_PASS}
+  pool: 5
+  timeout: 5000
+
+legacy:
+  adapter: postgresql
+  encoding: utf8
+  database: ${DBLEG_NAME}
+  username: ${DBLEG_USER}
+  password: ${DBLEG_PASS}
   pool: 5
   timeout: 5000
 EOL
