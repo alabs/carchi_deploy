@@ -35,12 +35,14 @@ ssh atencionciudadana.carchi.gob.ec
 ```
 
 5. Se trabaja sobre la rama de git master. Una vez se tengan los cambios hechos se suben 
-a la rama git production o staging.
+al servidor correcto en funcion del entorno.
 
 ```
-git checkout staging 
-git merge master 
-git push origin staging
+git push origin master 
 cap staging deploy
-git checkout master
+```
+
+```
+git push origin master 
+cap production deploy
 ```
