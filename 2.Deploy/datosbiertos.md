@@ -13,6 +13,8 @@ máquina virtual (por ejemplo VirtualBox) y realizar el proceso de instalación.
 ssh carchi-lxc
 sudo lxc-attach -n stag-datosabiertos
 source /usr/lib/ckan/default/bin/activate
-pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master 
+cd /usr/local/src/ckanext-carchi_theme 
+git pull origin master 
+python setup.py install 
 sudo service apache2 reload
 ```

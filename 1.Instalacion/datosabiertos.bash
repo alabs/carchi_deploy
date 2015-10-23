@@ -112,10 +112,16 @@ paster db init -c /etc/ckan/default/production.ini
 
 mkdir -p /var/lib/ckan
 chown www-data: /var/lib/ckan
-sudo chmod u+rwx /var/lib/ckan
+chmod u+rwx /var/lib/ckan
 
 # install carchi_theme
-pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master
+#pip install --upgrade --no-deps --force-reinstall https://github.com/alabs/ckanext-carchi_theme/zipball/master
+apt-get install -y git
+cd /usr/local/src/ 
+git clone https://github.com/alabs/ckanext-carchi_theme 
+cd ckanext-carchi_theme 
+python setup.py install 
+
 sed -i "/ckan.plugins = /c\ckan.plugins = stats text_view image_view recline_view carchi_theme"  /etc/ckan/default/production.ini
 #sed -i "/ckan.plugins = /c\ckan.plugins = stats text_view image_view recline_view datastore carchi_theme"  /etc/ckan/default/production.ini
 sed -i "/ckan.site_title = /c\ckan.site_title = Datos Abiertos El Carchi"  /etc/ckan/default/production.ini
