@@ -47,7 +47,6 @@ user.permissions.create(module: "news", action: "create")
 
 Con respecto a los permisos, se detallan en el fichero *app/models/permission.rb*. Estas son las opciones disponibles en este momento:
 
-<pre>
   Módulo          |    Acción       | Que puede hacer
 ------------------|-----------------|-------------------------
   news            | create          | Crear noticias
