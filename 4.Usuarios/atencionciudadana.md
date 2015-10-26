@@ -32,10 +32,12 @@ El usuario puede acceder al admin a través de la URL https://atencionciudadana.
 
 Cada usuario puede tener distintos grados de permisos, en el caso del ejemplo le estamos dando el grado de acceso "Administrador total de la plataforma". Los otros grados son:  
 
+<pre>
 user.actividad: "Sólo acceso a inscritos de Actividades de la Casa de la Juventud"
 user.plantas: "Sólo acceso a inscritos de Plantas de Gestión Ambiental"
 user.audiencia: "Sólo acceso a inscritos de Audiencia con el Prefecto"
 user.admin: "Administrador total de la plataforma"
+</pre>
 
 Para elegir un grado distinto debe hacerse cambiando al línea `user.admin = true` por `user.audiencia = true` segun corresponda.
 
