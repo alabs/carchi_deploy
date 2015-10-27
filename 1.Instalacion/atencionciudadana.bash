@@ -85,8 +85,8 @@ fi
 
 # Base de datos PostgreSQL
 apt-get -y install language-pack-es postgresql
-pg_dropcluster --stop 9.3 main
-pg_createcluster --locale=es_ES.utf8 --start 9.3 main
+pg_dropcluster --stop 9.1 main
+pg_createcluster --locale=es_ES.utf8 --start 9.1 main
 
 # create database
 sudo -u postgres createuser -S -D -R ${DB_USER}
@@ -97,7 +97,7 @@ sudo -u postgres createuser -S -D -R ${DBLEG_USER}
 sudo -u postgres psql -c "ALTER USER ${DBLEG_USER} PASSWORD '${DBLEG_PASS}';"
 sudo -u postgres createdb -O ${DBLEG_USER} ${DBLEG_NAME} # -E utf-8
 
-sed -i '/local.*all.*all.*peer/c\local\tall\t\tall\t\t\t\t\tmd5'  /etc/postgresql/9.3/main/pg_hba.conf
+sed -i '/local.*all.*all.*peer/c\local\tall\t\tall\t\t\t\t\tmd5'  /etc/postgresql/9.1/main/pg_hba.conf
 service postgresql reload
 
 # install postfix (SMTP)
