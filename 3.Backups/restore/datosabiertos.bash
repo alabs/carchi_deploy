@@ -1,8 +1,8 @@
 #!/bin/bash
 # 
 # Script para la restauración de la copia de seguridad de la plataforma de Atención Ciudadana de Carchi
+#
 # Autor: apereira@alabs.org
-# Fecha: 8 de Septiembre de 2015 
 #
 # Restaura la última copia de seguridad que encuentre en /usr/local/backup/dump/dump.sql.gz
 # 
@@ -16,7 +16,8 @@
 # de seguridad de prod-datosabiertos a prod-datosabiertos, o sea, se conectaría al mismo usuario y contraseña
 # que ya tiene.), lo que se debe hacer es poner ALTER_PERMISSIONS=false.
 #  
- 
+# Aparte de ALTER_PERMISSIONS hay que revisar para cada una de las plataformas la función restore_files 
+# 
 
 ALTER_PERMISSIONS=true
 # ALTER_PERMISSIONS=false
@@ -74,6 +75,8 @@ restore_postgres() {
   service ${WEBSERVER} start
 }
 
+################################################################################
+
 restore_files() {
   tar xzfP etc.tgz
   tar xzfP ckan.tgz
@@ -81,8 +84,6 @@ restore_files() {
   mv /var/lib/ckan/ /var/lib/ckan.${today}
   mv /usr/local/backup/restore/var/lib/ckan /var/lib/
 }
-
-################################################################################
 
 init_restore () {
   # pre-requisites
