@@ -42,7 +42,7 @@ install_dropbox_uploader() {
     which curl || sudo apt-get install -y curl 
     curl "https://raw.githubusercontent.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh" -o /usr/local/bin/dropbox_uploader.sh
     chmod +x /usr/local/bin/dropbox_uploader.sh 
-    dropbox_uploader.sh
+    /usr/local/bin/dropbox_uploader.sh
   fi
 }
 
@@ -74,7 +74,7 @@ backup_file() {
 upload_to_dropbox() { 
   # sube un fichero a dropbox
   # acepta un parametro, fichero a subir
-  dropbox_uploader.sh -q upload $1 backup.${URL}.${1}
+  /usr/local/bin/dropbox_uploader.sh -q upload $1 backup.${URL}.${1}
 }
 
 init_backup () {
